@@ -1,12 +1,20 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
 
 namespace Bookish
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Book book = new Book();
+            book.bookCatalogue();
+
+
         }
     }
 }
+

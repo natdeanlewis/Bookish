@@ -6,4 +6,8 @@
         <RootNamespace>Bookish</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Bookish.DataAccess\Bookish.DataAccess.csproj" />
+    </ItemGroup>
+
 </Project>
