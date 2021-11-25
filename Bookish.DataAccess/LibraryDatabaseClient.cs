@@ -15,12 +15,19 @@ namespace Bookish.DataAccess
             using (IDbConnection db = new SqlConnection("Server=localhost;Database=Bookish;Trusted_Connection=True;"))
             {
                 db.Open();
-                var sql = "SELECT BookId FROM Book ORDER BY Title";
+                var sql = "SELECT BookId, ISBN FROM Book ORDER BY Title";
 
-                var result = db.Query<int>(sql);
-                var bookIds = result.ToList();
+                var result = db.Query<Book>(sql);
+                result = result.GroupBy(x => x.Isbn).Select(x => x.First()).ToList();
+                
+                var bookIds = new List<int>();
+                foreach (var book in result)
+                {
+                    bookIds.Add(book.BookId);
+                }
+                
                 Console.WriteLine("Here's what's in the catalogue:");
-                foreach (var bookId in bookIds) PrintBookInfo(bookId);
+                foreach (var bookId in bookIds) Console.WriteLine(PrintBookInfo(bookId));
             }
         }
 
@@ -33,7 +40,7 @@ namespace Bookish.DataAccess
 
                 var parameters = new {MemberId = memberId};
                 var sql =
-                    "SELECT b.Title, bm.DueDate FROM Book b " +
+                    "SELECT b.BookId, bm.DueDate FROM Book b " +
                     "INNER JOIN BookMember bm ON b.BookId = bm.BookId " +
                     "INNER JOIN Member m ON bm.MemberId = m.MemberId " +
                     "WHERE m.MemberId = @MemberId ORDER BY bm.DueDate";
@@ -45,7 +52,7 @@ namespace Bookish.DataAccess
                 foreach (var loanedBook in result)
                 {
                     var date = loanedBook.DueDate.ToString("d", CultureInfo.CreateSpecificCulture("en-GB"));
-                    Console.WriteLine($"{loanedBook.Title}, due back on {date}");
+                    Console.WriteLine($"{PrintBookInfo(loanedBook.BookId)}, due back on {date}");
                 }
             }
         }
@@ -58,28 +65,33 @@ namespace Bookish.DataAccess
             {
                 db.Open();
 
-                var sql = "SELECT b.BookId FROM Book b " +
+                var sql = "SELECT b.BookId, b.ISBN FROM Book b " +
                           "INNER JOIN BookAuthor ba ON b.BookId = ba.BookId " +
                           "INNER JOIN Author a ON ba.AuthorId = a.AuthorId " +
                           "WHERE b.Title LIKE '%'+ @Request + '%' " +
                           "OR a.LastName LIKE '%'+ @Request + '%' " +
                           "OR a.FirstName LIKE '%'+ @Request + '%'";
 
-                var bookIds = db.Query<int>(sql, parameters);
+                var result = db.Query<Book>(sql, parameters);
 
-                bookIds = bookIds.Distinct().ToList();
+                var bookIds = new List<int>();
+                
+                foreach (var book in result)
+                {
+                    bookIds.Add(book.BookId);
+                }
 
-                Console.WriteLine("Here are the books matching your search:");
-                foreach (var bookId in bookIds) PrintBookInfo(bookId);
+                Console.WriteLine("Here are the titles matching your search:");
+                foreach (var bookId in bookIds) Console.WriteLine(PrintBookInfo(bookId));
             }
         }
 
-        private static void PrintBookInfo(int bookId)
+        private static string PrintBookInfo(int bookId)
         {
             var book = new Book();
             book.Authors = GetBookAuthors(bookId);
             book.Title = GetBookTitle(bookId);
-            Console.WriteLine(book);
+            return book.ToString();
         }
 
         private static string GetBookTitle(int bookId)

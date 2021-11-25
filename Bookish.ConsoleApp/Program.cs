@@ -12,6 +12,7 @@ namespace Bookish
             LibraryDatabaseClient.GetAllLoans(1);
             Console.WriteLine();
             LibraryDatabaseClient.Search("am");
+            
         }
     }
 }

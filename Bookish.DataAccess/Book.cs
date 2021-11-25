@@ -13,6 +13,7 @@ namespace Bookish
         public string Isbn;
         public string LastName;
         public string Title;
+        public int copies;
 
         public override string ToString()
         {
