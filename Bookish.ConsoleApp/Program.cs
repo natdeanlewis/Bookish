@@ -1,20 +1,13 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
+﻿using Bookish.DataAccess;
 
 namespace Bookish
 {
-    class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {
-            Book book = new Book();
-            book.bookCatalogue();
-
-
+            LibraryDatabaseClient.GetAllBooks();
+            LibraryDatabaseClient.GetAllLoans(1);
         }
     }
 }
-

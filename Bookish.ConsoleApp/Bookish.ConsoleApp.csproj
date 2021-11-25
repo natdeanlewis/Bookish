@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Bookish.DataAccess\Bookish.DataAccess.csproj" />
+        <ProjectReference Include="..\Bookish.DataAccess\Bookish.DataAccess.csproj"/>
     </ItemGroup>
 
 </Project>
