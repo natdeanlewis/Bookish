@@ -74,6 +74,8 @@ namespace Bookish.DataAccess
 
                 var result = db.Query<Book>(sql, parameters);
 
+                result = result.GroupBy(x => x.Isbn).Select(x => x.First()).ToList();
+
                 var bookIds = new List<int>();
                 
                 foreach (var book in result)
@@ -83,6 +85,8 @@ namespace Bookish.DataAccess
 
                 Console.WriteLine("Here are the titles matching your search:");
                 foreach (var bookId in bookIds) Console.WriteLine(PrintBookInfo(bookId));
+                
+                
             }
         }
 
